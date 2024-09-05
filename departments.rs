@@ -3,12 +3,8 @@ use std::io::{self, Write};
 fn main() {
     let department_names = [String::from("Sales"), String::from("Engineering")];
     let mut new_company = create_company(String::from("Company A"), &department_names);
-    println!("{new_company:?}");
 
-    let input_result = prompt_user();
-
-    let employee_name = input_result[0].trim();
-    let department_name = input_result[1].trim();
+    let (employee_name, department_name) = prompt_user();
 
     let department = new_company.departments.iter_mut().find(|dept| dept.name == department_name);
     
@@ -20,27 +16,24 @@ fn main() {
             return;
         }
 
-        dept.employees.push(Employee{name: employee_name.to_string()});
+        dept.employees.push(Employee{name: employee_name});
     } else {
-        new_company.departments.push(Department {name: department_name.to_string(), employees: vec![Employee {name: employee_name.to_string()}]});
+        new_company.departments.push(Department {name: department_name, employees: vec![Employee {name: employee_name}]});
     }
 
-    println!("{new_company:?}");
+    
 
 }
 
-#[derive(Debug)]
 struct Employee {
     name: String,
 }
 
-#[derive(Debug)]
 struct Department {
     name: String,
     employees: Vec<Employee>,
 }
 
-#[derive(Debug)]
 struct Company {
     name: String,
     departments: Vec<Department>,
@@ -62,20 +55,20 @@ fn create_company(company_name: String, department_names: &[String]) -> Company 
         name: company_name,
         departments
     };
-    println!("{new_company:?}");
+    
     return new_company;
 }
 
-fn prompt_user() -> [String; 2] {
-    let mut name_input = String::new();
-    let mut department_input = String::new();
+fn prompt_user() -> (String, String) {
+    let name_input = String::new();
+    let department_input = String::new();
     
     print!("Enter the employee's name: ");
-    let _=io::stdout().flush();
-    let _ = io::stdin().read_line(&mut name_input);
+    io::stdout().flush().unwrap();
+    io::stdin().read_line(&mut name_input.trim().to_string()).expect("Error!");
     print!("Enter the department name: ");
-    let _=io::stdout().flush();
-    let _=io::stdin().read_line(&mut department_input);
+    io::stdout().flush().unwrap();
+    io::stdin().read_line(&mut department_input.trim().to_string()).expect("Error!");
 
-    return [name_input, department_input];
+    return (name_input, department_input);
 }
